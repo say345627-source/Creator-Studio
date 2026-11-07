@@ -85,7 +85,8 @@ fun DashboardScreen(
     selectedPeriodDays: Int,
     onPeriodSelected: (Int) -> Unit,
     onNavigate: (String) -> Unit,
-    onVideoClick: (VideoItem) -> Unit
+    onVideoClick: (VideoItem) -> Unit,
+    onOpenConnectAccount: () -> Unit = {}
 ) {
     val pendingComments = comments.filter { it.needsReply && it.moderationStatus == "published" }
     val topVideos = videos.sortedByDescending { it.views }.take(4)
@@ -106,6 +107,56 @@ fun DashboardScreen(
                 onPeriodSelected = onPeriodSelected,
                 onNavigate = onNavigate
             )
+        }
+
+        // Quick Connect Channel Card
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .clickable { onOpenConnectAccount() }
+                    .testTag("banner_connect_account"),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)),
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(StudioRed),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "ربط حساب وقناتك على YouTube",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            color = StudioRed
+                        )
+                        Text(
+                            text = "اربط حسابك الشخصي أو أضف قناتك (@Handle) لإدارتها ونشر Shorts",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 11.sp
+                        )
+                    }
+                    SuggestionChip(
+                        onClick = onOpenConnectAccount,
+                        label = { Text("ربط الآن", fontWeight = FontWeight.Bold, fontSize = 11.sp) }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(14.dp))
         }
 
         // 2. "Needs Attention" Alerts if any

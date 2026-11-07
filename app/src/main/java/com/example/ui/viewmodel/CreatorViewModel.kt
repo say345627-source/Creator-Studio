@@ -96,6 +96,10 @@ class CreatorViewModel(application: Application) : AndroidViewModel(application)
         repository.switchChannel(channel)
     }
 
+    fun connectUserChannel(title: String, handle: String, customId: String? = null, subscribersCount: Long = 1000L) {
+        repository.connectUserChannel(title, handle, customId, subscribersCount)
+    }
+
     fun setAnalyticsPeriod(days: Int) {
         _selectedPeriodDays.value = days
         repository.setAnalyticsPeriod(days)

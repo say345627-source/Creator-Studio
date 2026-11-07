@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Lock
@@ -67,7 +68,8 @@ import com.example.ui.theme.StudioRose
 @Composable
 fun SettingsScreen(
     currentChannel: Channel?,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onOpenConnectAccount: () -> Unit = {}
 ) {
     BackHandler { onBack() }
     val context = LocalContext.current
@@ -124,6 +126,21 @@ fun SettingsScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 10.sp
                         )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Button(
+                            onClick = onOpenConnectAccount,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("btn_settings_connect_channel"),
+                            colors = ButtonDefaults.buttonColors(containerColor = StudioRed),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("ربط حساب أو قناة YouTube أخرى", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        }
                     }
                 }
             }

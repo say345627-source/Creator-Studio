@@ -389,6 +389,57 @@ class CreatorRepository(
         }
     }
 
+    fun connectUserChannel(
+        title: String,
+        handle: String,
+        customId: String? = null,
+        subscribersCount: Long = 1000L,
+        avatarUrl: String? = null
+    ) {
+        scope.launch {
+            val cleanHandle = if (handle.startsWith("@")) handle else "@$handle"
+            val channelId = if (!customId.isNullOrBlank()) customId else ("UC_" + UUID.randomUUID().toString().take(16))
+            val newChannel = Channel(
+                id = channelId,
+                title = title.ifBlank { "قناتي على YouTube" },
+                handle = cleanHandle,
+                avatarUrl = if (!avatarUrl.isNullOrBlank()) avatarUrl else "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+                subscribersCount = subscribersCount.coerceAtLeast(10),
+                videosCount = 1,
+                totalViews = (subscribersCount * 28).coerceAtLeast(2500),
+                description = "القناة الرسمية المربوطة بحساب Google (abdallhtaktok@gmail.com)",
+                keywords = "shorts, youtube, creator, video",
+                country = "SA",
+                bannerUrl = "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1000&auto=format&fit=crop&q=80",
+                defaultLanguage = "ar",
+                lastUpdated = System.currentTimeMillis()
+            )
+            channelDao.insertOrUpdate(newChannel)
+            _currentChannel.value = newChannel
+
+            // Create initial welcome short for this channel
+            val welcomeVideo = VideoItem(
+                videoId = "v_" + UUID.randomUUID().toString().take(8),
+                channelId = newChannel.id,
+                title = "مرحباً بكم في قناتي على YouTube! 🌟 #Shorts",
+                description = "تم ربط القناة بنجاح في تطبيق Creator Studio لإدارة القناة ونشر فيديوهات Shorts المجدولة تلقائياً.",
+                tags = "welcome,shorts,creator",
+                categoryId = "22",
+                privacyStatus = "public",
+                publishedAt = System.currentTimeMillis(),
+                durationSeconds = 6,
+                isShort = true,
+                uploadStatus = "processed",
+                thumbnailUrl = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop&q=80",
+                views = 142,
+                likes = 28,
+                commentsCount = 5,
+                selfDeclaredMadeForKids = false
+            )
+            videoDao.insertOrUpdate(welcomeVideo)
+        }
+    }
+
     fun updateVideo(video: VideoItem) {
         scope.launch {
             videoDao.update(video)

@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.ui.components.ConnectAccountDialog
 import com.example.ui.components.StudioBottomBar
 import com.example.ui.components.StudioTopBar
 import com.example.ui.navigation.Screen
@@ -53,6 +54,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CreatorStudioApp(viewModel: CreatorViewModel) {
     var currentRoute by remember { mutableStateOf(Screen.Dashboard.route) }
+    var showConnectDialog by remember { mutableStateOf(false) }
 
     // Collect states with lifecycle
     val currentChannel by viewModel.currentChannel.collectAsStateWithLifecycle()
@@ -90,7 +92,8 @@ fun CreatorStudioApp(viewModel: CreatorViewModel) {
                     isRefreshing = isRefreshing,
                     onSwitchChannel = { viewModel.switchChannel(it) },
                     onRefresh = { viewModel.refreshData() },
-                    onOpenQueue = { currentRoute = Screen.PublishingQueue.route }
+                    onOpenQueue = { currentRoute = Screen.PublishingQueue.route },
+                    onOpenConnectAccount = { showConnectDialog = true }
                 )
             }
         },
@@ -125,7 +128,8 @@ fun CreatorStudioApp(viewModel: CreatorViewModel) {
                             onVideoClick = { video ->
                                 viewModel.selectVideoForEdit(video)
                                 currentRoute = Screen.VideoDetail.route
-                            }
+                            },
+                            onOpenConnectAccount = { showConnectDialog = true }
                         )
                     }
 
@@ -214,7 +218,8 @@ fun CreatorStudioApp(viewModel: CreatorViewModel) {
                     Screen.Settings.route -> {
                         SettingsScreen(
                             currentChannel = currentChannel,
-                            onBack = { currentRoute = Screen.Dashboard.route }
+                            onBack = { currentRoute = Screen.Dashboard.route },
+                            onOpenConnectAccount = { showConnectDialog = true }
                         )
                     }
 
@@ -252,11 +257,23 @@ fun CreatorStudioApp(viewModel: CreatorViewModel) {
                             onVideoClick = { video ->
                                 viewModel.selectVideoForEdit(video)
                                 currentRoute = Screen.VideoDetail.route
-                            }
+                            },
+                            onOpenConnectAccount = { showConnectDialog = true }
                         )
                     }
                 }
             }
+        }
+
+        if (showConnectDialog) {
+            ConnectAccountDialog(
+                userEmail = "abdallhtaktok@gmail.com",
+                projectId = "mednotes-cf48d",
+                onDismiss = { showConnectDialog = false },
+                onConnectChannel = { title, handle, customId, subs ->
+                    viewModel.connectUserChannel(title, handle, customId, subs)
+                }
+            )
         }
     }
 }
