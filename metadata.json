@@ -1,0 +1,6 @@
+{
+  "name": "Creator Studio",
+  "description": "لوحة تحكم وتحليلات متقدمة لقنوات YouTube، وإنشاء مجدول لفيديوهات Shorts من الصور ونشر فوري",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
