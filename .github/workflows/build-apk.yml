@@ -23,9 +23,15 @@ jobs:
           java-version: '17'
 
       - name: Configure Android SDK
+        shell: bash
         run: |
-          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
-          yes | sdkmanager --licenses
+          SDKMANAGER="$(find "${ANDROID_HOME:-/usr/local/lib/android/sdk}/cmdline-tools" -type f -name sdkmanager -print -quit)"
+          if [ -z "$SDKMANAGER" ]; then
+            echo "sdkmanager was not found under ANDROID_HOME/cmdline-tools"
+            exit 1
+          fi
+          echo "$(dirname "$SDKMANAGER")" >> "$GITHUB_PATH"
+          yes | "$SDKMANAGER" --licenses
 
       - name: Install Android SDK packages
         run: |
